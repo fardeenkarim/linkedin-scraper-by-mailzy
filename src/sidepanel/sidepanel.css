@@ -1,0 +1,308 @@
+/* mailzy palette — indigo gradient from the brand mark. */
+:root {
+  --bg: #ffffff;
+  --fg: #1c1c2e;
+  --muted: #6b6b85;
+  --line: #e4e4f0;
+  --accent: #5b57d9;
+  --accent-dark: #4340b8;
+  --danger: #b24020;
+  --chip: #f2f2fb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16161f;
+    --fg: #e9e9f2;
+    --muted: #9a9ab5;
+    --line: #2e2e40;
+    --accent: #8387f6;
+    --accent-dark: #6b6fe8;
+    --danger: #f5877f;
+    --chip: #22222e;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+/* The side panel is user-resizable, so the layout is a full-height flex column
+   with the result list absorbing the slack. */
+body {
+  display: flex;
+  flex-direction: column;
+  min-width: 260px;
+  margin: 0;
+  padding: 12px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.mark { flex: none; border-radius: 7px; }
+.wordmark { flex: 1; min-width: 0; }
+
+h1 { margin: 0; font-size: 14px; font-weight: 650; letter-spacing: -0.01em; }
+/* Lowercase is deliberate — "mailzy" is styled lowercase as a wordmark. */
+.wordmark p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: lowercase;
+}
+
+.pill {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--chip);
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.pill.ok { background: rgba(91, 87, 217, 0.14); color: var(--accent); }
+.pill.bad { background: rgba(178, 64, 32, 0.14); color: var(--danger); }
+
+.controls { display: grid; gap: 10px; margin-bottom: 12px; }
+
+label {
+  display: grid;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+}
+
+.range { display: flex; align-items: center; gap: 6px; }
+.range span { color: var(--muted); }
+
+.actions { display: flex; gap: 8px; margin-bottom: 12px; }
+
+button {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:hover:not(:disabled) { background: var(--chip); }
+button:disabled { opacity: 0.45; cursor: default; }
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+button.primary:hover:not(:disabled) { background: var(--accent-dark); border-color: var(--accent-dark); }
+button.danger { color: var(--danger); }
+
+.status { margin-bottom: 10px; }
+.statline { display: flex; align-items: baseline; gap: 6px; font-size: 12px; }
+.statline strong { font-size: 20px; font-weight: 700; }
+.statline span { color: var(--muted); }
+
+.bar {
+  height: 4px;
+  margin: 8px 0 6px;
+  border-radius: 2px;
+  background: var(--chip);
+  overflow: hidden;
+}
+#fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+#message { margin: 0; color: var(--muted); font-size: 11px; }
+.error { margin: 4px 0 0; color: var(--danger); font-size: 11px; }
+.hidden { display: none; }
+
+.preview {
+  flex: 1;
+  min-height: 60px;
+  margin-bottom: 10px;
+  display: flex;
+}
+#list {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+#list:empty { border-style: dashed; }
+#list li {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+}
+#list li:last-child { border-bottom: 0; }
+#list b { display: block; font-weight: 600; }
+#list em {
+  display: block;
+  color: var(--muted);
+  font-style: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+footer { display: flex; gap: 6px; }
+footer button { font-size: 11px; padding: 6px 4px; }
+
+/* Halt notice — LinkedIn pushed back and the run stopped. */
+.banner {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--danger);
+  border-radius: 4px;
+  background: rgba(178, 64, 32, 0.1);
+  color: var(--danger);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.meta { margin: 3px 0 0; color: var(--muted); font-size: 10px; }
+
+details {
+  margin-bottom: 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+summary {
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+details[open] summary { border-bottom: 1px solid var(--line); }
+details .grid { display: grid; gap: 9px; padding: 10px; }
+
+label.check {
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11px;
+}
+label.check input { width: auto; }
+
+button.link {
+  flex: none;
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 500;
+  text-decoration: underline;
+}
+button.link:hover { background: transparent; }
+
+#list li { position: relative; padding-right: 44px; }
+.tag {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: var(--chip);
+  color: var(--muted);
+  font-size: 9px;
+  font-style: normal;
+  letter-spacing: 0.02em;
+}
+.tag.api { background: rgba(91, 87, 217, 0.16); color: var(--accent); }
+
+/* First-run consent gate — covers the whole panel until acknowledged. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 16px;
+  overflow-y: auto;
+  background: var(--bg);
+}
+/* Beats the shared .hidden rule, which has equal specificity but comes first. */
+.overlay.hidden { display: none; }
+.overlay .mark.lg { border-radius: 11px; margin-bottom: 2px; }
+.overlay h2 { margin: 0; font-size: 16px; font-weight: 650; }
+.overlay p { margin: 0; font-size: 12px; line-height: 1.55; color: var(--fg); }
+.overlay button { margin-top: auto; }
+button.wide { flex: none; width: 100%; padding: 10px; }
+
+/* Self-test */
+#diagOut { display: grid; gap: 3px; }
+#diagOut:empty { display: none; }
+
+.chk {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 5px;
+  align-items: start;
+  font-size: 11px;
+}
+.chk .icon { font-weight: 700; line-height: 1.4; }
+.chk.pass .icon { color: #3d8a3d; }
+.chk.fail .icon { color: var(--danger); }
+.chk.fail .label { font-weight: 600; }
+.chk .detail { display: block; color: var(--muted); font-size: 10px; }
+
+.diag-head {
+  margin: 2px 0 4px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  background: var(--chip);
+  font-size: 11px;
+  font-weight: 600;
+}
+.diag-head.fail { background: rgba(178, 64, 32, 0.12); color: var(--danger); }
+
+.gaps {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--line);
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.5;
+  word-break: break-word;
+}
+.gaps b { display: block; margin-bottom: 2px; color: var(--fg); font-size: 10px; }

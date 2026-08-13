@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="sidepanel.css" />
+    <title>LinkedIn Scraper by mailzy</title>
+  </head>
+  <body>
+    <!-- First-run gate. Shown until acknowledged, then never again unless the
+         notice itself is revised (see CONSENT_VERSION in sidepanel.js). -->
+    <div id="consent" class="overlay hidden">
+      <img class="mark lg" src="../../icons/icon128.png" alt="" width="44" height="44" />
+      <h2>Read this first</h2>
+      <p>
+        Collecting data from LinkedIn by automation conflicts with their User Agreement.
+        Accounts and Sales Navigator seats do get restricted, and sometimes closed for good,
+        over exactly this. No tool can engineer that risk away — including this one.
+      </p>
+      <p>
+        What it does do is keep the footprint small: it only reads data the page has already
+        loaded for you, never requesting anything extra. It holds itself to strict hourly and
+        daily ceilings, slows down when LinkedIn signals it should, and shuts off entirely at
+        the first sign of a verification prompt.
+      </p>
+      <p>
+        Treat it as reduced risk, not safety. Run it on a seat you could stand to lose, and
+        remember that the personal data it collects carries obligations under GDPR, CCPA and
+        similar laws wherever your contacts live.
+      </p>
+      <button id="consentAccept" class="primary wide">I understand — continue</button>
+    </div>
+
+    <header>
+      <img class="mark" src="../../icons/icon128.png" alt="" width="28" height="28" />
+      <div class="wordmark">
+        <h1>LinkedIn Scraper</h1>
+        <p>by mailzy</p>
+      </div>
+      <span id="pill" class="pill">checking…</span>
+    </header>
+
+    <div id="halt" class="banner hidden"></div>
+
+    <section class="controls">
+      <label>
+        How many pages?
+        <input id="maxPages" type="number" min="1" max="200" value="5" />
+      </label>
+      <p class="hint">Each page holds about 25 people.</p>
+    </section>
+
+    <section class="actions">
+      <button id="start" class="primary">Start</button>
+      <button id="stop" disabled>Stop</button>
+    </section>
+
+    <section class="status">
+      <div class="statline">
+        <strong id="count">0</strong> people saved
+        <span id="pages"></span>
+      </div>
+      <div class="bar"><div id="fill"></div></div>
+      <p id="message">Ready.</p>
+      <p id="error" class="error hidden"></p>
+      <p id="budget" class="meta"></p>
+    </section>
+
+    <section class="preview">
+      <ul id="list"></ul>
+    </section>
+
+    <footer>
+      <button id="csv" class="primary">Download CSV</button>
+      <button id="json">JSON</button>
+      <button id="copy">Copy</button>
+      <button id="clear" class="danger">Clear</button>
+    </footer>
+
+    <!-- Everything below is optional. The defaults are the recommended setup. -->
+    <details id="advanced">
+      <summary>Advanced (you can ignore this)</summary>
+      <div class="grid">
+        <p class="meta">
+          <b>Results look wrong or empty?</b> LinkedIn changes their website often. This
+          checks whether the extension can still read the page and shows what it found.
+        </p>
+        <div class="actions tight">
+          <button id="runDiag">Check the page</button>
+          <button id="copyDiag" disabled>Copy result</button>
+        </div>
+        <div id="diagOut"></div>
+
+        <hr />
+
+        <p class="meta">
+          <b>Speed limits.</b> Slower is safer — these defaults are deliberately unhurried.
+          Raising them increases the chance LinkedIn notices.
+        </p>
+        <label>
+          Wait between pages (seconds)
+          <div class="range">
+            <input id="minDelayMs" type="number" min="0" max="120" step="0.5" />
+            <span>to</span>
+            <input id="maxDelayMs" type="number" min="0" max="120" step="0.5" />
+          </div>
+        </label>
+        <label>
+          Take a longer break every… (pages)
+          <input id="burstPages" type="number" min="0" max="100" />
+        </label>
+        <label>
+          Length of that break (seconds)
+          <div class="range">
+            <input id="longPauseMinMs" type="number" min="0" max="900" />
+            <span>to</span>
+            <input id="longPauseMaxMs" type="number" min="0" max="900" />
+          </div>
+        </label>
+        <label>
+          Most pages per hour
+          <input id="maxPagesPerHour" type="number" min="1" max="1000" />
+        </label>
+        <label>
+          Most people per day
+          <input id="maxLeadsPerDay" type="number" min="1" max="100000" />
+        </label>
+        <label class="check">
+          <input id="pauseWhenHidden" type="checkbox" />
+          Pause while you're on another tab
+        </label>
+        <button id="resetPacing" class="link">Restore defaults</button>
+      </div>
+    </details>
+
+    <script src="../lib/schema.js"></script>
+    <script src="sidepanel.js"></script>
+  </body>
+</html>

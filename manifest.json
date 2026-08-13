@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "LinkedIn Scraper by mailzy",
+  "short_name": "mailzy Scraper",
+  "version": "1.0.0",
+  "description": "Extract people results from LinkedIn Sales Navigator search pages and export them as CSV or JSON.",
+  "minimum_chrome_version": "114",
+  "permissions": ["storage", "scripting", "downloads", "activeTab", "sidePanel"],
+  "host_permissions": ["https://www.linkedin.com/*"],
+  "background": {
+    "service_worker": "src/background/service-worker.js"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/sidepanel.html"
+  },
+  "action": {
+    "default_title": "Open LinkedIn Scraper by mailzy",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/sales/*"],
+      "js": ["src/content/interceptor.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://www.linkedin.com/sales/*"],
+      "js": [
+        "src/lib/dig.js",
+        "src/lib/schema.js",
+        "src/lib/normalize.js",
+        "src/content/capture.js",
+        "src/content/dom-extract.js",
+        "src/content/pacing.js",
+        "src/content/controller.js"
+      ],
+      "run_at": "document_start",
+      "world": "ISOLATED",
+      "all_frames": false
+    }
+  ]
+}
