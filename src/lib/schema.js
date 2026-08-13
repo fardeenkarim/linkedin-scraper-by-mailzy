@@ -1,5 +1,5 @@
 /**
- * The lead record schema — the single source of truth for field order, CSV
+ * The lead record schema - the single source of truth for field order, CSV
  * headers and the side panel's column picker. Loaded by both the content
  * scripts and the side panel, so it must stay dependency-free.
  */

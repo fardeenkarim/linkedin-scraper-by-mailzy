@@ -1,4 +1,4 @@
-/* mailzy palette — indigo gradient from the brand mark. */
+/* mailzy palette - indigo gradient from the brand mark. */
 :root {
   --bg: #ffffff;
   --fg: #1c1c2e;
@@ -51,7 +51,7 @@ header {
 .wordmark { flex: 1; min-width: 0; }
 
 h1 { margin: 0; font-size: 14px; font-weight: 650; letter-spacing: -0.01em; }
-/* Lowercase is deliberate — "mailzy" is styled lowercase as a wordmark. */
+/* Lowercase is deliberate - "mailzy" is styled lowercase as a wordmark. */
 .wordmark p {
   margin: 0;
   color: var(--muted);
@@ -177,9 +177,11 @@ button.danger { color: var(--danger); }
 }
 
 footer { display: flex; gap: 6px; }
-footer button { font-size: 11px; padding: 6px 4px; }
+footer button { font-size: 11px; padding: 7px 4px; }
+/* Download is the primary action, so it takes the space Clear doesn't need. */
+footer button.grow { flex: 3; }
 
-/* Halt notice — LinkedIn pushed back and the run stopped. */
+/* Halt notice - LinkedIn pushed back and the run stopped. */
 .banner {
   margin-bottom: 10px;
   padding: 8px 10px;
@@ -234,22 +236,15 @@ button.link {
 }
 button.link:hover { background: transparent; }
 
-#list li { position: relative; padding-right: 44px; }
-.tag {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  padding: 1px 5px;
-  border-radius: 8px;
-  background: var(--chip);
-  color: var(--muted);
-  font-size: 9px;
-  font-style: normal;
-  letter-spacing: 0.02em;
-}
-.tag.api { background: rgba(91, 87, 217, 0.16); color: var(--accent); }
+.hint { margin: 5px 0 0; color: var(--muted); font-size: 10px; }
 
-/* First-run consent gate — covers the whole panel until acknowledged. */
+/* Advanced drawer sits at the very bottom, closed by default. */
+#advanced { margin: 10px 0 0; }
+#advanced hr { margin: 4px 0; border: 0; border-top: 1px solid var(--line); }
+#advanced .meta b { color: var(--fg); }
+.actions.tight { margin-bottom: 0; }
+
+/* First-run consent gate - covers the whole panel until acknowledged. */
 .overlay {
   position: fixed;
   inset: 0;

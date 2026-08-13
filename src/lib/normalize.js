@@ -116,7 +116,9 @@
     const start = ymd(digAny(pos, ["startedOn", "startDate", "timePeriod.startDate"]));
     const end = ymd(digAny(pos, ["endedOn", "endDate", "timePeriod.endDate"]));
     if (!title && !company) return null;
-    const span = [start, end || (start ? "present" : "")].filter(Boolean).join("–");
+    // "to" rather than a dash: the dates already contain hyphens, so
+    // "2017-01-2021-02" would be unreadable in a spreadsheet cell.
+    const span = [start, end || (start ? "present" : "")].filter(Boolean).join(" to ");
     return { title, company, start, end, label: [title, company, span].filter(Boolean).join(" @ ") };
   }
 
@@ -153,14 +155,17 @@
       .map((s) => str(digAny(s, ["text", "type", "spotlightType", "label"])))
       .filter(Boolean);
 
-    const education = []
+    // Kept structured, then formatted - reading the school back out of a joined
+    // string would break on any school whose own name contains the separator.
+    const schooling = []
       .concat(digAny(raw, ["educations", "education", "schools"]) || [])
-      .map((e) => {
-        const school = str(digAny(e, ["schoolName", "school.name", "school"]));
-        const field = str(digAny(e, ["fieldOfStudy", "degreeName", "degree"]));
-        return [school, field].filter(Boolean).join(" — ");
-      })
-      .filter(Boolean);
+      .map((e) => ({
+        school: str(digAny(e, ["schoolName", "school.name", "school"])),
+        field: str(digAny(e, ["fieldOfStudy", "degreeName", "degree"])),
+      }))
+      .filter((e) => e.school || e.field);
+
+    const education = schooling.map((e) => [e.school, e.field].filter(Boolean).join(", "));
 
     const geo = digAny(raw, ["geoRegion", "location", "geoRegionName", "locationName"]);
 
@@ -193,7 +198,7 @@
       pastCompany: pastPositions[0] ? pastPositions[0].company : "",
       pastPositions: pastPositions.map((p) => p.label),
       yearsExperience: str(digAny(raw, ["yearsOfExperience", "numOfYearsExperience", "experienceYears"])),
-      school: education[0] ? education[0].split(" — ")[0] : "",
+      school: schooling[0] ? schooling[0].school : "",
       education,
 
       location: isUrn(geo) ? str(digAny(raw, ["geoRegionName", "locationName"])) : str(geo),

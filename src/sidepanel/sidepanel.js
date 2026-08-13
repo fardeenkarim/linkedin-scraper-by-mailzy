@@ -2,7 +2,7 @@
 
 const $ = (id) => document.getElementById(id);
 
-/** Isolated-world scripts, in dependency order — mirrors the manifest. */
+/** Isolated-world scripts, in dependency order - mirrors the manifest. */
 const CONTENT_SCRIPTS = [
   "src/lib/dig.js",
   "src/lib/schema.js",
@@ -24,7 +24,7 @@ const PACING_FIELDS = {
   maxLeadsPerDay: { ms: false },
 };
 
-/** Bump only when the notice's substance changes — that re-prompts everyone. */
+/** Bump only when the notice's substance changes - that re-prompts everyone. */
 const CONSENT_VERSION = 1;
 
 let requestedPages = 0;
@@ -38,7 +38,7 @@ async function activeTab() {
 }
 
 /**
- * Ping the content script, injecting it if absent — needed when the extension
+ * Ping the content script, injecting it if absent - needed when the extension
  * was loaded while a Sales Navigator tab was already open, since manifest
  * content scripts only run on navigation.
  *
@@ -101,7 +101,7 @@ function renderStatus(status) {
   $("error").classList.toggle("hidden", !status.error);
 
   const halt = $("halt");
-  halt.textContent = status.halted ? `Halted — ${status.haltReason}` : "";
+  halt.textContent = status.halted ? `Halted - ${status.haltReason}` : "";
   halt.classList.toggle("hidden", !status.halted);
 
   $("pages").textContent = status.pagesDone ? `· ${status.pagesDone} page(s)` : "";
@@ -175,7 +175,7 @@ async function refreshTabState() {
     $("start").disabled = !!ping.running;
 
     if (!ping.interceptor) {
-      $("message").textContent = "Reload the tab to enable full API capture.";
+      $("message").textContent = "Refresh this LinkedIn tab to collect the full detail.";
     }
   } catch {
     disable("reload the tab");
@@ -261,8 +261,8 @@ function renderDiag(report) {
   const head = document.createElement("div");
   head.className = `diag-head${report.failures ? " fail" : ""}`;
   head.textContent = report.failures
-    ? `${report.failures} of ${report.checks.length} checks need attention`
-    : `All ${report.checks.length} checks passed`;
+    ? `${report.failures} thing${report.failures > 1 ? "s" : ""} need attention`
+    : "Everything looks fine";
   out.append(head);
 
   for (const check of report.checks) {
@@ -297,17 +297,13 @@ function renderDiag(report) {
   const summary = document.createElement("div");
   summary.className = "gaps";
   const title = document.createElement("b");
-  title.textContent = `Field coverage — ${report.coverage.length - gaps.length}/${report.coverage.length} populated across ${report.rows.merged} row(s)`;
+  title.textContent = `Found ${report.coverage.length - gaps.length} of ${report.coverage.length} details for ${report.rows.merged} people`;
   summary.append(title);
 
-  if (gaps.length) {
-    summary.append(`Empty: ${gaps.map((g) => g.key + (g.apiOnly ? "*" : "")).join(", ")}. `);
-  }
-  if (partial.length) {
-    summary.append(`Sparse: ${partial.map((p) => p.key).join(", ")}. `);
-  }
-  if (gaps.some((g) => g.apiOnly)) {
-    summary.append("* API-only fields — expected empty if API capture did not fire.");
+  if (gaps.length) summary.append(`Blank: ${gaps.map((g) => g.key).join(", ")}. `);
+  if (partial.length) summary.append(`Patchy: ${partial.map((p) => p.key).join(", ")}. `);
+  if (gaps.length || partial.length) {
+    summary.append("Some blanks are normal. If something you need is missing, use Copy result and send it on.");
   }
   out.append(summary);
 
@@ -316,11 +312,11 @@ function renderDiag(report) {
 
 function reportText(report) {
   const lines = [
-    "LinkedIn Scraper by mailzy — self-test",
+    "LinkedIn Scraper by mailzy - self-test",
     report.when,
     report.url,
     "",
-    ...report.checks.map((c) => `${c.ok ? "PASS" : "FAIL"}  ${c.label}${c.detail ? ` — ${c.detail}` : ""}`),
+    ...report.checks.map((c) => `${c.ok ? "PASS" : "FAIL"}  ${c.label}${c.detail ? ` - ${c.detail}` : ""}`),
     "",
     `Rows: ${report.rows.dom} DOM, ${report.rows.api} API, ${report.rows.merged} merged`,
     "",
@@ -409,23 +405,8 @@ $("csv").addEventListener("click", async () => {
   download(`mailzy-linkedin-leads-${stamp()}.csv`, "text/csv", `﻿${toCsv(leads)}`);
 });
 
-$("json").addEventListener("click", async () => {
-  const { leads = [] } = await chrome.storage.local.get("leads");
-  if (!leads.length) return;
-  download(`mailzy-linkedin-leads-${stamp()}.json`, "application/json", JSON.stringify(leads, null, 2));
-});
-
-$("copy").addEventListener("click", async () => {
-  const { leads = [] } = await chrome.storage.local.get("leads");
-  if (!leads.length) return;
-  await navigator.clipboard.writeText(JSON.stringify(leads, null, 2));
-  const btn = $("copy");
-  btn.textContent = "Copied";
-  setTimeout(() => (btn.textContent = "Copy"), 1200);
-});
-
 $("clear").addEventListener("click", async () => {
-  // Deliberately leaves `budget` alone — clearing results must not reset the
+  // Deliberately leaves `budget` alone - clearing results must not reset the
   // daily cap, or the cap would mean nothing.
   await chrome.storage.local.set({ leads: [], status: null });
   chrome.action.setBadgeText({ text: "" });

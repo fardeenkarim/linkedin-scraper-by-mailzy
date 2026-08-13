@@ -1,5 +1,5 @@
 /**
- * Scrape controller — orchestrates capture, extraction, merging and pacing.
+ * Scrape controller - orchestrates capture, extraction, merging and pacing.
  *
  * Per page: wait for visibility and budget, scroll to force lazy rows to
  * render, take whatever the interceptor captured for that page, extract the
@@ -69,7 +69,7 @@
       const id = SNS.identity(lead);
       if (!id) continue;
       if (index.has(id)) {
-        // Same person seen again — keep the richer of the two records.
+        // Same person seen again - keep the richer of the two records.
         const merged = SNS.merge(lead, index.get(id));
         index.set(id, merged);
         enriched++;
@@ -118,7 +118,7 @@
   async function scrapeCurrentPage(since) {
     const ctx = { page: state.page, searchUrl: location.href };
 
-    // API records first — richer, and ordered exactly as the server returned them.
+    // API records first - richer, and ordered exactly as the server returned them.
     const payloads = await capture.waitFor(state.page, API_WAIT_MS, since);
     const apiLeads = payloads.flatMap((entry) => SNS.leadsFromPayload(entry.body, ctx));
 
@@ -161,9 +161,9 @@
 
   function canStart() {
     if (state.running) return { ok: false, error: "Already running." };
-    if (!consentGiven) return { ok: false, error: "Acknowledge the risk notice before scraping." };
+    if (!consentGiven) return { ok: false, error: "Please accept the notice first." };
     if (!onSearchPage()) {
-      return { ok: false, error: "Open a Sales Navigator people search first (/sales/search/people)." };
+      return { ok: false, error: "Open a Sales Navigator people search first." };
     }
     return { ok: true };
   }
@@ -206,7 +206,7 @@
         await renderAllRows();
         if (state.stopRequested || pacing.runtime.halted) break;
 
-        const { leads: pageLeads, apiCount, domCount } = await scrapeCurrentPage(since);
+        const { leads: pageLeads } = await scrapeCurrentPage(since);
         if (!pageLeads.length) {
           await report({ message: "No people found on this page." });
           break;
@@ -218,7 +218,7 @@
         state.pagesDone++;
 
         await report({
-          message: `Page ${state.page} — ${added} new${enriched ? `, ${enriched} updated` : ""}.`,
+          message: `Page ${state.page} - ${added} new${enriched ? `, ${enriched} updated` : ""}.`,
         });
 
         if (i === maxPages - 1) break;
@@ -253,7 +253,7 @@
         ? `Halted: ${pacing.runtime.haltReason}`
         : state.stopRequested
           ? `Stopped. ${state.found} people saved.`
-          : `Finished — ${state.found} people saved from ${state.pagesDone} page(s).`,
+          : `Finished - ${state.found} people saved from ${state.pagesDone} page(s).`,
     });
   }
 
@@ -262,7 +262,7 @@
   /**
    * Preflight against the live page. Every assumption the scraper makes gets
    * checked and reported, plus per-field fill rates from the rows currently
-   * rendered — so a selector that has drifted shows up as an empty column here
+   * rendered - so a selector that has drifted shows up as an empty column here
    * rather than as a silently blank CSV after a 40-page run.
    *
    * Passive: no scrolling, no clicking, no requests.
@@ -271,26 +271,26 @@
     const checks = [];
     const add = (label, ok, detail = "") => checks.push({ label, ok, detail });
 
-    add("On a people search page", onSearchPage(), location.pathname);
-    add("Risk notice acknowledged", consentGiven);
+    add("You're on a people search page", onSearchPage(), location.pathname);
+    add("Notice accepted", consentGiven);
     add(
-      "Interceptor active in page",
+      "Connected to the page",
       capture.state.interceptorReady,
-      capture.state.interceptorReady ? "fetch/XHR patched" : "reload the tab — capture will fall back to DOM"
+      capture.state.interceptorReady ? "fetch/XHR patched" : "reload the tab - capture will fall back to DOM"
     );
 
     const items = dom.resultItems();
-    add("Result rows located", items.length > 0, `${items.length} rendered (scroll loads the rest)`);
+    add("Can see the people listed", items.length > 0, `${items.length} visible right now`);
 
     const box = dom.scrollContainer();
     const isInner = box !== document.scrollingElement && box !== document.documentElement;
-    add("Scroll container identified", Boolean(box), isInner ? "inner pane" : "document (verify on a long list)");
+    add("Can scroll the results", Boolean(box), isInner ? "" : "check this on a long list");
 
-    add("Page number detected", Number.isFinite(dom.currentPageNumber()), `page ${dom.currentPageNumber()}`);
+    add("Knows which page you're on", Number.isFinite(dom.currentPageNumber()), `page ${dom.currentPageNumber()}`);
     const next = dom.nextButton();
-    add("Next-page button found", Boolean(next), next ? "" : "absent — fine on a single-page result set");
+    add("Can find the Next button", Boolean(next), next ? "" : "none here - normal if there is only one page");
     const total = dom.totalResults();
-    add("Total result count parsed", total !== null, total !== null ? `${total} results` : "not shown");
+    add("Can read the total count", total !== null, total !== null ? `${total} results` : "LinkedIn is not showing one");
 
     const payloads = capture.peek();
     const apiRows = payloads.flatMap((p) => {
@@ -301,20 +301,20 @@
       }
     });
     add(
-      "API payloads captured",
+      "Receiving data from LinkedIn",
       payloads.length > 0,
-      `${payloads.length} buffered, ${apiRows.length} leads parsed`
+      `${payloads.length} batches, ${apiRows.length} people`
     );
     add(
-      "API parsing produced leads",
+      "Can read that data",
       apiRows.length > 0,
-      apiRows.length ? "" : "endpoint pattern may need updating (see LEAD_ENDPOINT)"
+      apiRows.length ? "" : "LinkedIn may have changed something - send this report"
     );
 
     const domRows = dom.extractPage({ page: dom.currentPageNumber(), searchUrl: location.href });
-    add("DOM extraction produced rows", domRows.length > 0, `${domRows.length} rows`);
+    add("Backup reading method works", domRows.length > 0, `${domRows.length} people`);
 
-    // Storage round-trip — proves the export path has somewhere to write.
+    // Storage round-trip - proves the export path has somewhere to write.
     let storageOk = false;
     try {
       await chrome.storage.local.set({ __snsProbe: 1 });
@@ -323,18 +323,18 @@
     } catch {
       storageOk = false;
     }
-    add("Extension storage writable", storageOk);
+    add("Can save results", storageOk);
 
     await pacing.loadConfig();
     const budget = await pacing.budgetStatus();
     add(
-      "Pacing budget readable",
+      "Daily limits working",
       Boolean(budget),
-      `${budget.leadsRemaining} leads / ${budget.pagesRemaining} pages left`
+      `${budget.leadsRemaining} people / ${budget.pagesRemaining} pages left`
     );
 
     const challenge = pacing.detectChallenge();
-    add("No challenge or checkpoint detected", !challenge, challenge);
+    add("No LinkedIn warning on screen", !challenge, challenge);
 
     // Per-field coverage across the merged view of whatever is on screen.
     const merged = new Map();

@@ -106,7 +106,7 @@
     waitFor,
     subscribe: (fn) => (listeners.add(fn), () => listeners.delete(fn)),
     pending: () => buffer.length,
-    /** Read the buffer without consuming it — for diagnostics. */
+    /** Read the buffer without consuming it - for diagnostics. */
     peek: () => buffer.slice(),
     clearThrottle: () => (state.throttled = null),
   };

@@ -1,5 +1,5 @@
 /**
- * DOM extraction — the fallback path and gap-filler.
+ * DOM extraction - the fallback path and gap-filler.
  *
  * API capture is authoritative when it fires, but it won't always: LinkedIn
  * serves some results from a client-side cache with no new request, and
@@ -7,7 +7,7 @@
  * (if shallower) second source and the merge step prefers whichever has data.
  *
  * Selector lists are ordered by durability. `data-anonymize` attributes come
- * first — LinkedIn uses them internally to blur PII for screenshots, so they
+ * first - LinkedIn uses them internally to blur PII for screenshots, so they
  * track the *meaning* of a field and survive visual redesigns that rename every
  * CSS class in the row.
  */
@@ -51,7 +51,7 @@
     return [...document.querySelectorAll("#search-results-container li.artdeco-list__item")];
   }
 
-  /** Nearest scrollable ancestor — Sales Nav scrolls an inner pane, not the window. */
+  /** Nearest scrollable ancestor - Sales Nav scrolls an inner pane, not the window. */
   function scrollContainer() {
     let node = (resultItems()[0] || {}).parentElement;
     while (node && node !== document.body) {

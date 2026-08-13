@@ -3,13 +3,13 @@
  *
  * This is the honest version of "don't get flagged": stay genuinely low-volume
  * and obey the platform when it pushes back. There is no disguise here and none
- * is possible — request volume, timing and per-seat usage are all measured
+ * is possible - request volume, timing and per-seat usage are all measured
  * server-side, where nothing running in this browser can reach. What a client
  * *can* do is be small, irregular, and quick to stop.
  *
  *   - Hard ceilings on pages/hour and leads/day, persisted across sessions so
  *     closing the browser doesn't reset your budget.
- *   - Jittered delays drawn from a triangular distribution. Not to look human —
+ *   - Jittered delays drawn from a triangular distribution. Not to look human -
  *     to avoid the fixed-interval drumbeat that a uniform sleep produces.
  *   - Periodic long pauses between bursts.
  *   - Exponential backoff on HTTP 429/999, and a full stop on a challenge.

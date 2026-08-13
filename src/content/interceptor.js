@@ -1,5 +1,5 @@
 /**
- * Passive response capture — MAIN world, document_start.
+ * Passive response capture - MAIN world, document_start.
  *
  * Sales Navigator is a single-page app backed by the Voyager / sales-api JSON
  * endpoints. The DOM is a lossy projection of those payloads: it drops company
@@ -8,7 +8,7 @@
  *
  * So rather than scrape the projection, we read the source. This patches fetch
  * and XMLHttpRequest to *observe* responses the page requests on its own and
- * forwards a clone to the isolated world. It issues no requests of its own —
+ * forwards a clone to the isolated world. It issues no requests of its own -
  * every byte it sees was already on its way to the user's browser. That makes
  * it both the most precise extraction path and the one with zero added load.
  *
